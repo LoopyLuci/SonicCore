@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SonicCore</string>
+    <string name="notification_listener_label">SonicCore per-app mixer</string>
+    <string name="service_channel_name">Audio control</string>
+    <string name="service_channel_description">Keeps SonicCore\'s audio engine and automation running</string>
+    <string name="service_notification_title">SonicCore active</string>
+    <string name="service_notification_text">Audio control and automation running</string>
+    <string name="tile_equalizer">Equalizer</string>
+    <string name="tile_profile">Audio profile</string>
+    <string name="tile_output">Audio output</string>
+    <string name="widget_label">SonicCore controls</string>
+    <string name="widget_description">Volume, profile and output at a glance</string>
+    <string name="action_stop">Stop</string>
+    <string name="action_next_profile">Next profile</string>
+</resources>

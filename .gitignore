@@ -1,0 +1,23 @@
+# Build artifacts
+build/
+.gradle/
+.kotlin/
+local.properties
+*.iml
+.idea/
+captures/
+.externalNativeBuild/
+.cxx/
+
+# Keystores and signing credentials — never commit
+*.jks
+*.keystore
+keystore/
+keystore.properties
+
+# Bundletool output
+*.apks
+
+# OS
+.DS_Store
+Thumbs.db

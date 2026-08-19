@@ -1,0 +1,53 @@
+name: Device compatibility report
+description: Report what does and does not work on your specific device
+labels: [compatibility]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Android exposes audio control inconsistently, and manufacturers restrict more on
+        top of that. These reports build a picture of what actually works in the wild.
+
+  - type: input
+    id: device
+    attributes:
+      label: Device and Android version
+      placeholder: Pixel 8, Android 15
+    validations:
+      required: true
+
+  - type: input
+    id: audio_device
+    attributes:
+      label: Audio device
+      placeholder: Sony WH-1000XM5 over Bluetooth
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: works
+    attributes:
+      label: What works
+      options:
+        - label: Device is detected and named correctly
+        - label: Battery level is shown
+        - label: Codec is reported correctly (SBC / AAC / LDAC / aptX)
+        - label: Codec can be changed
+        - label: Per-device profile applies automatically on connect
+        - label: Equalizer audibly affects output
+        - label: Platform effects attach (bass boost, virtualiser, reverb)
+        - label: Per-app volume control
+        - label: Automation rules fire as expected
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Anything unexpected
+      description: Controls that appear but do nothing, wrong values, missing devices.
+
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: Diagnostic log
+      description: Settings → Diagnostics → Export log. Shows exactly which APIs your device refused.
+      render: text

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Feature-module strings.
+
+  All user-visible copy lives in resources rather than Kotlin literals so the app can be
+  translated. F-Droid has an active translator community and Weblate picks these up
+  automatically.
+-->
+<resources>
+
+    <!-- Diagnostics -->
+    <string name="diagnostics_title">Diagnostics</string>
+    <string name="diagnostics_explainer">Android and your phone\'s manufacturer refuse some audio operations. SonicCore records every refusal here — export this log when reporting a bug.</string>
+    <string name="diagnostics_export">Export log</string>
+    <string name="diagnostics_clear">Clear</string>
+    <string name="diagnostics_all_clear">No problems recorded</string>
+    <string name="diagnostics_empty">Nothing recorded yet. That means every audio operation SonicCore attempted has succeeded on this device.</string>
+    <!-- %1$d = error count, %2$d = warning count -->
+    <string name="diagnostics_counts">%1$d errors · %2$d warnings</string>
+
+    <plurals name="diagnostics_event_count">
+        <item quantity="one">%d event recorded</item>
+        <item quantity="other">%d events recorded</item>
+    </plurals>
+
+    <!-- Shared actions -->
+    <string name="action_cancel">Cancel</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_reset">Reset</string>
+    <string name="action_remove">Remove</string>
+    <string name="action_undo">Undo</string>
+    <string name="action_save">Save</string>
+    <string name="action_done">Done</string>
+    <string name="action_retry">Retry</string>
+
+    <!-- Loading and empty states -->
+    <string name="loading">Loading…</string>
+    <string name="loading_devices">Looking for audio devices…</string>
+    <string name="loading_discovery">Scanning your network for speakers…</string>
+    <string name="empty_devices">No audio devices found. Connect headphones, a USB DAC, or pair a Bluetooth device.</string>
+    <string name="empty_devices_title">Nothing connected yet</string>
+    <string name="empty_profiles">No profiles yet. Create one to save EQ and effects for a specific device.</string>
+    <string name="empty_profiles_title">No profiles</string>
+    <string name="empty_rules">No automation rules yet. Add one to switch profiles automatically.</string>
+    <string name="empty_rules_title">No rules</string>
+    <string name="empty_sessions">No apps are playing audio right now.</string>
+    <string name="empty_sessions_title">Nothing playing</string>
+    <string name="empty_speakers">No network speakers found. Make sure they are on the same Wi‑Fi network.</string>
+
+    <!-- Destructive confirmations. %1$s = the item name. -->
+    <string name="confirm_delete_profile_title">Delete this profile?</string>
+    <string name="confirm_delete_profile_body">“%1$s” and its EQ, effects and device links will be removed. This cannot be undone.</string>
+    <string name="confirm_delete_preset_title">Delete this preset?</string>
+    <string name="confirm_delete_preset_body">“%1$s” will be removed. Built-in presets can be restored by resetting presets.</string>
+    <string name="confirm_delete_rule_title">Delete this rule?</string>
+    <string name="confirm_delete_rule_body">“%1$s” will stop running. This cannot be undone.</string>
+    <string name="confirm_reset_effects_title">Reset all effects?</string>
+    <string name="confirm_reset_effects_body">Every effect returns to its default. Your EQ is not affected.</string>
+    <string name="confirm_reset_eq_title">Reset the equalizer?</string>
+    <string name="confirm_reset_eq_body">All bands return to flat and the preamp is cleared.</string>
+    <string name="confirm_clear_diagnostics_title">Clear the diagnostic log?</string>
+    <string name="confirm_clear_diagnostics_body">Recorded platform failures will be discarded. Export first if you are about to report a bug.</string>
+
+    <!-- Undo feedback. %1$s = item name. -->
+    <string name="undo_deleted_profile">Deleted “%1$s”</string>
+    <string name="undo_deleted_rule">Deleted “%1$s”</string>
+    <string name="undo_deleted_band">Band removed</string>
+    <string name="undo_reset_effects">Effects reset</string>
+
+</resources>

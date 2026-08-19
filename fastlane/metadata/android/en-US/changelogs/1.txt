@@ -1,0 +1,19 @@
+SonicCore v1.0.0 — first release.
+
+Unified audio control for wired, USB, Bluetooth and network devices, with per-device
+profiles applied automatically on connect.
+
+- Per-device EQ, effects and volume profiles
+- Parametric and graphic equaliser over real biquad filters, with live frequency
+  response and spectrum analysis
+- AutoEQ preset import; 23 built-in presets
+- Crossfeed, stereo width, balance, phase inversion, bass boost, virtualisation,
+  reverb, compressor and limiter
+- Per-app mixer showing what the platform actually permits
+- Microphone engine: noise gate, de-esser, input EQ, live monitoring
+- Automation rules with priorities and cooldowns
+- Quick Settings tiles and a home screen widget
+- Diagnostic log export for bug reports
+
+This build contains no proprietary dependencies, so Chromecast is unavailable.
+AirPlay streaming works.

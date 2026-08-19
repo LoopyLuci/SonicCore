@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Cast registration for the `full` flavor only.
+
+  The Cast SDK requires this meta-data: without it,
+  CastContext.getSharedInstance() throws and casting silently never works.
+
+  It lives in the full flavor so the FOSS/F-Droid build contains no reference to
+  com.google.android.gms at all — a manifest entry pointing at a missing class would
+  otherwise be a latent crash and an F-Droid policy problem.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <application>
+        <meta-data
+            android:name="com.google.android.gms.cast.framework.OPTIONS_PROVIDER_CLASS_NAME"
+            android:value="com.soniccore.cast.CastOptionsProvider" />
+    </application>
+
+</manifest>

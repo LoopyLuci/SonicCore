@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Benchmark-only manifest additions.
+
+  Macrobenchmark on Android 10/11 cannot read trace sections from the target process
+  unless it is profileable, and fails with:
+    AssertionError: ERRORS (not suppressed): NOT-PROFILEABLE
+
+  This lives in the `benchmark` build type rather than main/ so the shipping APK is not
+  made shell-profileable — that would let any adb user profile the release app.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <application tools:ignore="AndroidElementNotAllowed">
+        <profileable android:shell="true" />
+    </application>
+
+</manifest>

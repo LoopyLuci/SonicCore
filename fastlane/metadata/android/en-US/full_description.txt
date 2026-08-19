@@ -1,0 +1,53 @@
+SonicCore is a single place to control every audio device your phone can reach — wired
+headphones, USB DACs, Bluetooth earbuds, and network speakers — instead of hunting
+through system settings that expose only a fraction of what the Android audio stack can
+actually do.
+
+<b>Per-device profiles</b>
+Every device gets its own EQ, effects and volume settings, applied automatically when it
+connects. Your studio headphones and your car stereo stop fighting over one global EQ.
+Devices are identified by a stable key that survives reconnects, so a profile stays
+attached to the right headphones.
+
+<b>Equalizer that shows its work</b>
+Graphic and fully parametric modes, drawn from a real biquad filter chain (RBJ cookbook
+coefficients) rather than a decorative curve. Live frequency response, a spectrum
+analyser, and 23 built-in presets. AutoEQ preset files can be imported directly, so
+measured corrections for your exact headphone model work out of the box.
+
+<b>Effects and dynamics</b>
+Crossfeed for headphone listening, stereo width and balance, channel swap and phase
+inversion, bass boost, virtualisation, reverb, a compressor and a limiter that is on by
+default so processing cannot clip your output.
+
+<b>Per-app mixer</b>
+See which apps hold audio sessions and adjust what the platform actually permits.
+SonicCore is explicit about limits: where Android forbids per-app volume control, it
+says so instead of showing a slider that does nothing.
+
+<b>Microphone engine</b>
+Input source selection, gain, noise gate with separate attack and release, de-esser,
+input EQ, and live monitoring with a level meter.
+
+<b>Automation</b>
+Rules that react to device connection, time of day, battery level and headset actions,
+with priorities and cooldowns so overlapping rules behave predictably.
+
+<b>System integration</b>
+Quick Settings tiles, a home screen widget, and a foreground service that keeps profiles
+applied while you use other apps.
+
+<b>Honest about the platform</b>
+Android restricts a lot of audio control, and manufacturers restrict more. Where a
+feature is unavailable on your device, SonicCore explains which permission or API is
+missing rather than failing silently. A built-in diagnostic log records what the platform
+refused, so bug reports can be specific.
+
+<b>This F-Droid build</b>
+Contains no proprietary dependencies and no Google Play Services. Chromecast support is
+therefore unavailable in this build — it requires a closed-source Google SDK. AirPlay
+streaming is unaffected, because it is implemented from scratch over RTSP. Everything
+else is identical to the GitHub release.
+
+No ads, no tracking, no analytics, no network access except for discovering and streaming
+to speakers on your own network.

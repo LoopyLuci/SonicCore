@@ -1,0 +1,69 @@
+name: Bug report
+description: Something does not work as expected
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        SonicCore records every platform call the OS or your manufacturer refused.
+        Exporting that log turns a vague report into a fixable one — please attach it.
+
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you expected, and what happened instead.
+    validations:
+      required: true
+
+  - type: input
+    id: device
+    attributes:
+      label: Device and Android version
+      placeholder: Nokia 7.2, Android 11
+    validations:
+      required: true
+
+  - type: dropdown
+    id: build
+    attributes:
+      label: Which build?
+      options:
+        - full (GitHub release)
+        - foss (F-Droid)
+        - built from source
+    validations:
+      required: true
+
+  - type: dropdown
+    id: transport
+    attributes:
+      label: Audio device involved
+      options:
+        - Built-in speaker
+        - 3.5mm wired
+        - USB DAC / interface
+        - Bluetooth
+        - WiFi (Chromecast / AirPlay)
+        - Not device-specific
+    validations:
+      required: true
+
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: Diagnostic log
+      description: |
+        Settings → Diagnostics → Export log, then paste or attach it here.
+        It contains your Android version, device model, and which platform calls were
+        refused. No personal data and no identifiers beyond the device model.
+      render: text
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Connect Bluetooth earbuds
+        2. Open Devices
+        3. Tap the codec selector

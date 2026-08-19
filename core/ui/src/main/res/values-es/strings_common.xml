@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Spanish translation — partial, and deliberately so.
+
+  This exists to PROVE the extraction works: Android falls back to values/ for any key
+  absent here, so a partial translation is valid and the app stays fully usable. It also
+  gives Weblate and F-Droid translators a working example to build on.
+
+  Spanish has the same two plural forms as English; languages like Polish or Arabic need
+  more <item quantity> variants, which is exactly why the counts are plurals rather than
+  "%d " + word.
+-->
+<resources>
+
+    <!-- Diagnostics -->
+    <string name="diagnostics_title">Diagnóstico</string>
+    <string name="diagnostics_explainer">Android y el fabricante de tu teléfono rechazan algunas operaciones de audio. SonicCore registra aquí cada rechazo: exporta este registro al informar de un error.</string>
+    <string name="diagnostics_export">Exportar registro</string>
+    <string name="diagnostics_clear">Borrar</string>
+    <string name="diagnostics_all_clear">No se han registrado problemas</string>
+    <string name="diagnostics_empty">Todavía no hay nada registrado. Eso significa que todas las operaciones de audio que SonicCore ha intentado han funcionado en este dispositivo.</string>
+    <string name="diagnostics_counts">%1$d errores · %2$d advertencias</string>
+
+    <plurals name="diagnostics_event_count">
+        <item quantity="one">%d evento registrado</item>
+        <item quantity="other">%d eventos registrados</item>
+    </plurals>
+
+    <!-- Shared actions -->
+    <string name="action_cancel">Cancelar</string>
+    <string name="action_delete">Eliminar</string>
+    <string name="action_reset">Restablecer</string>
+    <string name="action_remove">Quitar</string>
+    <string name="action_undo">Deshacer</string>
+    <string name="action_save">Guardar</string>
+    <string name="action_done">Hecho</string>
+    <string name="action_retry">Reintentar</string>
+
+    <!-- Loading and empty states -->
+    <string name="loading">Cargando…</string>
+    <string name="loading_devices">Buscando dispositivos de audio…</string>
+    <string name="loading_discovery">Buscando altavoces en tu red…</string>
+    <string name="empty_devices_title">Nada conectado todavía</string>
+    <string name="empty_devices">No se han encontrado dispositivos de audio. Conecta auriculares, un DAC USB o empareja un dispositivo Bluetooth.</string>
+    <string name="empty_profiles_title">Sin perfiles</string>
+    <string name="empty_profiles">Todavía no hay perfiles. Crea uno para guardar el ecualizador y los efectos de un dispositivo concreto.</string>
+    <string name="empty_rules_title">Sin reglas</string>
+    <string name="empty_rules">Todavía no hay reglas de automatización. Añade una para cambiar de perfil automáticamente.</string>
+    <string name="empty_sessions_title">No suena nada</string>
+    <string name="empty_sessions">Ninguna aplicación está reproduciendo audio ahora mismo.</string>
+
+    <!-- Counts -->
+    <plurals name="count_devices">
+        <item quantity="one">%d dispositivo</item>
+        <item quantity="other">%d dispositivos</item>
+    </plurals>
+    <plurals name="count_profiles">
+        <item quantity="one">%d perfil</item>
+        <item quantity="other">%d perfiles</item>
+    </plurals>
+    <plurals name="count_presets">
+        <item quantity="one">%d preajuste</item>
+        <item quantity="other">%d preajustes</item>
+    </plurals>
+    <plurals name="count_rules">
+        <item quantity="one">%d regla</item>
+        <item quantity="other">%d reglas</item>
+    </plurals>
+
+    <!-- More tab -->
+    <string name="more_audio_tools">Herramientas de audio</string>
+    <string name="more_diagnostics">Diagnóstico</string>
+
+    <!-- Tiles -->
+    <string name="tile_equalizer">Ecualizador</string>
+    <string name="tile_audio_profile">Perfil de audio</string>
+    <string name="tile_audio_output">Salida de audio</string>
+
+</resources>

@@ -1,0 +1,47 @@
+Categories:
+  - Multimedia
+License: MIT
+AuthorName: SonicCore contributors
+SourceCode: https://github.com/LoopyLuci/SonicCore
+IssueTracker: https://github.com/LoopyLuci/SonicCore/issues
+Changelog: https://github.com/LoopyLuci/SonicCore/releases
+
+AutoName: SonicCore
+Description: |-
+  Unified audio control centre for every output your phone can reach — wired
+  headphones, USB DACs, Bluetooth earbuds and network speakers.
+
+  Features per-device profiles applied automatically on connect, a parametric
+  equaliser built on real biquad filters with live frequency response and spectrum
+  analysis, AutoEQ preset import, crossfeed and dynamics processing, a per-app
+  mixer, a microphone engine with noise gate and de-esser, automation rules, Quick
+  Settings tiles and a home screen widget.
+
+  This build contains no proprietary dependencies and no Google Play Services, so
+  Chromecast support is unavailable — it requires a closed-source Google SDK.
+  AirPlay streaming works, because it is implemented from scratch over RTSP.
+
+  No ads, no tracking, no analytics. Network access is used only to discover and
+  stream to speakers on your own network.
+
+RepoType: git
+Repo: https://github.com/LoopyLuci/SonicCore.git
+
+Builds:
+  - versionName: 1.0.0-foss
+    versionCode: 1
+    commit: v1.0.0
+    subdir: app
+    gradle:
+      - foss
+    # The FOSS flavor excludes play-services-cast-framework entirely; verified by
+    # grepping the built dex for com/google/android/gms (expected: 0 matches).
+    scandelete:
+      - keystore.properties
+
+AllowedAPKSigningKeys: ~
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags ^v[0-9.]+$
+CurrentVersion: 1.0.0-foss
+CurrentVersionCode: 1

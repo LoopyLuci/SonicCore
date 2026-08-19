@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Quantity- and format-dependent strings.
+
+  These were the last inline literals: they interpolate values, so they need real format
+  arguments rather than a straight text swap. Getting them into plurals matters more than
+  the plain strings did — "1 device(s)" is wrong in English and unfixable in languages with
+  more than two plural forms.
+-->
+<resources>
+
+    <!-- Counts shown on cards and section headers -->
+    <plurals name="count_devices">
+        <item quantity="one">%d device</item>
+        <item quantity="other">%d devices</item>
+    </plurals>
+
+    <plurals name="count_actions">
+        <item quantity="one">%d action</item>
+        <item quantity="other">%d actions</item>
+    </plurals>
+
+    <plurals name="count_conditions">
+        <item quantity="one">%d condition</item>
+        <item quantity="other">%d conditions</item>
+    </plurals>
+
+    <plurals name="count_app_rules">
+        <item quantity="one">%d app rule</item>
+        <item quantity="other">%d app rules</item>
+    </plurals>
+
+    <plurals name="count_filters">
+        <item quantity="one">%d filter</item>
+        <item quantity="other">%d filters</item>
+    </plurals>
+
+    <plurals name="count_system_bands">
+        <item quantity="one">%d system band</item>
+        <item quantity="other">%d system bands</item>
+    </plurals>
+
+    <plurals name="count_steps">
+        <item quantity="one">%d step</item>
+        <item quantity="other">%d steps</item>
+    </plurals>
+
+    <plurals name="count_profiles">
+        <item quantity="one">%d profile</item>
+        <item quantity="other">%d profiles</item>
+    </plurals>
+
+    <plurals name="count_presets">
+        <item quantity="one">%d preset</item>
+        <item quantity="other">%d presets</item>
+    </plurals>
+
+    <plurals name="count_rules">
+        <item quantity="one">%d rule</item>
+        <item quantity="other">%d rules</item>
+    </plurals>
+
+    <!-- Formatted values. %1$s is pre-formatted elsewhere so unit order stays localisable. -->
+    <string name="format_percent">%1$d%%</string>
+    <string name="widget_profiles_count">%1$d profiles</string>
+    <string name="format_khz">%1$s kHz</string>
+    <string name="format_channels">%1$dch</string>
+    <string name="format_fired_times">fired %1$d×</string>
+    <string name="format_used_times">used %1$d×</string>
+    <string name="format_auto_preamp">Auto preamp %1$s</string>
+    <string name="format_presets_available">%1$d available</string>
+    <string name="format_rules_enabled">%1$d of %2$d enabled</string>
+    <string name="format_io_summary">%1$d outputs · %2$d inputs</string>
+    <string name="format_profiles_saved">%1$d saved — create as many as you like</string>
+    <string name="format_filters_drag_hint">%1$s — drag nodes on the curve</string>
+    <string name="format_delete_named">Delete “%1$s”?</string>
+    <string name="format_applied_with_limitations">“%1$s” applied with limitations</string>
+
+    <!-- Quick Settings tiles and widget -->
+    <string name="tile_equalizer">Equalizer</string>
+    <string name="tile_audio_profile">Audio profile</string>
+    <string name="tile_audio_output">Audio output</string>
+    <string name="widget_name">SonicCore</string>
+
+    <!-- Volume controls -->
+    <string name="volume_fixed_explainer">This device reports a fixed volume — control it on the device itself.</string>
+
+    <!-- More tab -->
+    <string name="more_audio_tools">Audio tools</string>
+    <string name="more_diagnostics">Diagnostics</string>
+
+    <string name="device_active">Active</string>
+    <string name="device_battery_case">Case</string>
+</resources>

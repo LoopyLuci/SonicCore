@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Feature-screen strings, extracted from Kotlin literals so the app can be
+  translated. Grouped by feature module; keys are prefixed with the module name.
+-->
+<resources>
+
+    <!-- automation -->
+    <string name="automation_automation">Automation</string>
+    <string name="automation_cancel">Cancel</string>
+    <string name="automation_create">Create</string>
+    <string name="automation_delete">Delete</string>
+    <string name="automation_new_rule">New rule</string>
+    <string name="automation_no_rules_yet_create_one_to_switch_profil">No rules yet. Create one to switch profiles automatically when a device </string>
+    <string name="automation_rule_name">Rule name</string>
+    <string name="automation_rules">Rules</string>
+    <string name="automation_rules_run_inside_soniccore_s_foreground">Rules run inside SonicCore\'s foreground service. Android may delay background triggers while the device is dozing; time-based rules use exact alarms where the system permits them.</string>
+    <string name="automation_this_rule_will_stop_running_immediately">This rule will stop running immediately.</string>
+
+    <!-- dashboard -->
+    <string name="dashboard_all_devices">All devices</string>
+    <string name="dashboard_input">Input</string>
+    <string name="dashboard_no_output_device_detected">No output device detected.</string>
+    <string name="dashboard_output">Output</string>
+    <string name="dashboard_per_stream_hardware_control">Per-stream hardware control</string>
+    <string name="dashboard_profiles">Profiles</string>
+    <string name="dashboard_soniccore">SonicCore</string>
+    <string name="dashboard_test_signals">Test signals</string>
+    <string name="dashboard_verify_a_device_or_audition_the_eq">Verify a device or audition the EQ</string>
+    <string name="dashboard_volume">Volume</string>
+
+    <!-- devices -->
+    <string name="devices_bluetooth_permission_not_granted_battery">Bluetooth permission not granted — battery level and codec details for wireless devices are unavailable until you allow nearby device access.</string>
+    <string name="devices_devices">Devices</string>
+    <string name="devices_network_speaker_discovery_needs_android">Network speaker discovery needs Android 8 or newer.</string>
+    <string name="devices_not_connected_right_now_settings_are_kep">Not connected right now — settings are kept</string>
+    <string name="devices_remembered">Remembered</string>
+    <string name="devices_reported_capabilities">Reported capabilities</string>
+
+    <!-- effects -->
+    <string name="effects_balance_width_phase">Balance, width, phase</string>
+    <string name="effects_bass">Bass</string>
+    <string name="effects_binaural_rendering_with_head_tracking">Binaural rendering with head tracking</string>
+    <string name="effects_channels">Channels</string>
+    <string name="effects_compressor_and_limiter">Compressor and limiter</string>
+    <string name="effects_crossfeed">Crossfeed</string>
+    <string name="effects_dynamics">Dynamics</string>
+    <string name="effects_effects">Effects</string>
+    <string name="effects_loudness">Loudness</string>
+    <string name="effects_platform_bass_boost">Platform bass boost</string>
+    <string name="effects_platform_effects_bass_virtualizer_reverb">Platform effects (bass, virtualizer, reverb, loudness) attach to the global output mix and affect other apps where the device allows it. Crossfeed, channel processing and dynamics run in SonicCore\'s own DSP chain.</string>
+    <string name="effects_reduces_headphone_fatigue_by_blending_ch">Reduces headphone fatigue by blending channels</string>
+    <string name="effects_reverb">Reverb</string>
+    <string name="effects_spatial_audio">Spatial audio</string>
+    <string name="effects_virtual_surround">Virtual surround</string>
+
+    <!-- equalizer -->
+    <string name="equalizer_a_b">A/B</string>
+    <string name="equalizer_bands">Bands</string>
+    <string name="equalizer_cancel">Cancel</string>
+    <string name="equalizer_equalizer">Equalizer</string>
+    <string name="equalizer_frequency">Frequency</string>
+    <string name="equalizer_gain">Gain</string>
+    <string name="equalizer_no_filters_yet_add_one_to_start_shaping">No filters yet — add one to start shaping the response.</string>
+    <string name="equalizer_preset_name">Preset name</string>
+    <string name="equalizer_presets">Presets</string>
+    <string name="equalizer_save">Save</string>
+    <string name="equalizer_save_preset">Save preset</string>
+    <string name="equalizer_save_to_profile">Save to profile</string>
+
+    <!-- microphone -->
+    <string name="microphone_1f_dbfs">%%.1f dBFS</string>
+    <string name="microphone_attack">Attack</string>
+    <string name="microphone_automatic_gain_control">Automatic gain control</string>
+    <string name="microphone_beamforming">Beamforming</string>
+    <string name="microphone_clip">CLIP</string>
+    <string name="microphone_compressor">Compressor</string>
+    <string name="microphone_controls_platform_pre_processing">Controls platform pre-processing</string>
+    <string name="microphone_de_esser">De-esser</string>
+    <string name="microphone_directional_pickup_hint_device_dependent">Directional pickup hint (device dependent)</string>
+    <string name="microphone_echo_cancellation">Echo cancellation</string>
+    <string name="microphone_enable_gate">Enable gate</string>
+    <string name="microphone_evens_out_loud_and_quiet_passages">Evens out loud and quiet passages</string>
+    <string name="microphone_gain">Gain</string>
+    <string name="microphone_hear_yourself_while_you_speak">Hear yourself while you speak</string>
+    <string name="microphone_input_gain">Input gain</string>
+    <string name="microphone_input_level">Input level</string>
+    <string name="microphone_microphone">Microphone</string>
+    <string name="microphone_monitoring">Monitoring</string>
+    <string name="microphone_mutes_the_mic_below_a_threshold">Mutes the mic below a threshold</string>
+    <string name="microphone_noise_control">Noise control</string>
+    <string name="microphone_noise_gate">Noise gate</string>
+    <string name="microphone_release">Release</string>
+    <string name="microphone_sidetone">Sidetone</string>
+    <string name="microphone_sidetone_level">Sidetone level</string>
+    <string name="microphone_software_gain_android_has_no_hardware_mi">Software gain — Android has no hardware mic gain API</string>
+    <string name="microphone_source">Source</string>
+    <string name="microphone_tames_harsh_s_sounds_around_7_khz">Tames harsh S sounds around 7 kHz</string>
+    <string name="microphone_this_device_does_not_report_support_for">This device does not report support for the Unprocessed source; Voice recognition is used as the flattest available alternative.</string>
+    <string name="microphone_threshold">Threshold</string>
+    <string name="microphone_voice_processing">Voice processing</string>
+    <string name="microphone_wind_noise_reduction">Wind noise reduction</string>
+
+    <!-- mixer -->
+    <string name="mixer_android_does_not_allow_one_app_to_re_rou">Android does not allow one app to re-route another app\'s media stream. Volume here goes through each app\'s own media session; the system output switcher controls where that audio lands.</string>
+    <string name="mixer_android_only_exposes_other_apps_media_se">Android only exposes other apps\' media sessions to a notification listener. SonicCore reads session metadata and volume — it never reads your notification content.</string>
+    <string name="mixer_apps">Apps</string>
+    <string name="mixer_grant_access">Grant access</string>
+    <string name="mixer_hardware_volume_per_stream">Hardware volume per stream</string>
+    <string name="mixer_mixer">Mixer</string>
+    <string name="mixer_no_apps_are_playing_audio_right_now">No apps are playing audio right now.</string>
+    <string name="mixer_no_independent_volume">No independent volume</string>
+    <string name="mixer_per_app_control_needs_notification_acces">Per-app control needs notification access</string>
+    <string name="mixer_playing">Playing</string>
+    <string name="mixer_system_streams">System streams</string>
+
+    <!-- profiles -->
+    <string name="profiles_active">Active</string>
+    <string name="profiles_built_in">Built-in</string>
+    <string name="profiles_cancel">Cancel</string>
+    <string name="profiles_create">Create</string>
+    <string name="profiles_delete">Delete</string>
+    <string name="profiles_new_profile">New profile</string>
+    <string name="profiles_profile_name">Profile name</string>
+    <string name="profiles_profiles">Profiles</string>
+    <string name="profiles_this_removes_the_profile_and_all_of_its">This removes the profile and all of its settings. This can\'t be undone.</string>
+    <string name="profiles_your_profiles">Your profiles</string>
+
+    <!-- settings -->
+    <string name="settings_appearance">Appearance</string>
+    <string name="settings_audio_behaviour">Audio behaviour</string>
+    <string name="settings_backup">Backup</string>
+    <string name="settings_do_not_disturb">Do Not Disturb</string>
+    <string name="settings_everything_you_ve_created_as_portable_js">Everything you\'ve created, as portable JSON</string>
+    <string name="settings_experimental">Experimental</string>
+    <string name="settings_export">Export</string>
+    <string name="settings_feedback">Feedback</string>
+    <string name="settings_hearing_safety">Hearing safety</string>
+    <string name="settings_may_not_work_on_every_device">May not work on every device</string>
+    <string name="settings_notification_access">Notification access</string>
+    <string name="settings_notification_access_powers_the_per_app_m">Notification access powers the per-app mixer. Do Not Disturb access is needed to change ring and notification volume while DND is on.</string>
+    <string name="settings_permissions">Permissions</string>
+    <string name="settings_privacy">Privacy</string>
+    <string name="settings_service_notification">Service &amp; notification</string>
+    <string name="settings_settings">Settings</string>
+    <string name="settings_share">Share</string>
+    <string name="settings_visualization">Visualization</string>
+
+</resources>
