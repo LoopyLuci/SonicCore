@@ -47,6 +47,7 @@ fun MoreScreen(
     onRequestDndAccess: () -> Unit,
     onShareText: (String) -> Unit,
     onOpenDiagnostics: () -> Unit,
+    onOpenFailureReport: () -> Unit,
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
         // Fixed-height header — NOT scrollable, so the LazyColumn below gets
@@ -64,7 +65,7 @@ fun MoreScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable(onClick = onOpenDiagnostics)
+                    .clickable { onOpenDiagnostics() }
                     .padding(vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
@@ -78,6 +79,34 @@ fun MoreScreen(
                     text = stringResource(R.string.more_diagnostics),
                     style = MaterialTheme.typography.bodyMedium,
                 )
+            }
+
+            Spacer(Modifier.height(4.dp))
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { onOpenFailureReport() }
+                    .padding(vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.BugReport,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                Spacer(Modifier.width(12.dp))
+                Column {
+                    Text(
+                        text = "Failure report",
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                    Text(
+                        text = "Share what failed, help get it fixed",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
             }
         }
 

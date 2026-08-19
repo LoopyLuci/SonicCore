@@ -36,6 +36,7 @@ import com.soniccore.feature.microphone.MicrophoneScreen
 import com.soniccore.feature.mixer.MixerScreen
 import com.soniccore.feature.profiles.ProfilesScreen
 import com.soniccore.feature.settings.DiagnosticsScreen
+import com.soniccore.feature.settings.FailureReportScreen
 import com.soniccore.feature.settings.SettingsScreen
 
 /** Top-level destinations. The first five appear in the bottom bar. */
@@ -130,6 +131,7 @@ fun SonicCoreApp(
                     onRequestDndAccess = onRequestDndAccess,
                     onShareText = onShareText,
                     onOpenDiagnostics = { navController.navigate(ROUTE_DIAGNOSTICS) },
+                    onOpenFailureReport = { navController.navigate(ROUTE_FAILURE_REPORT) },
                 )
             }
 
@@ -139,9 +141,16 @@ fun SonicCoreApp(
             composable(ROUTE_DIAGNOSTICS) {
                 DiagnosticsScreen(onShareText = onShareText)
             }
+
+            composable(ROUTE_FAILURE_REPORT) {
+                FailureReportScreen(onShareText = onShareText)
+            }
         }
     }
 }
 
 /** Route for the diagnostic log viewer, reached from More. */
 const val ROUTE_DIAGNOSTICS = "diagnostics"
+
+/** Route for the failure report, reached from More. */
+const val ROUTE_FAILURE_REPORT = "failure_report"

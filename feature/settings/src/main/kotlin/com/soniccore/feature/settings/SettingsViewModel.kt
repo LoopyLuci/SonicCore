@@ -16,6 +16,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import com.soniccore.core.common.diagnostics.DiagEvent
 import com.soniccore.core.common.diagnostics.DiagLevel
 import com.soniccore.core.common.diagnostics.DiagnosticLog
+import com.soniccore.core.common.diagnostics.FailureSignal
+import com.soniccore.core.common.diagnostics.FailureSummary
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -56,6 +58,7 @@ class SettingsViewModel @Inject constructor(
     private val automationRepository: AutomationRepository,
     private val deviceRepository: DeviceRepository,
     private val diagnostics: DiagnosticLog,
+    private val failureSignal: FailureSignal,
 ) : ViewModel() {
 
     /**
@@ -95,6 +98,24 @@ class SettingsViewModel @Inject constructor(
     fun clearDiagnostics() {
         diagnostics.clear()
     }
+
+    // --- Failure signal (opt-in, privacy-safe) ---
+
+    /** Summary of recent failures, grouped by broad category. */
+    val failureSummary: StateFlow<FailureSummary> = failureSignal.summary
+
+    /** Recompute from the current diagnostic buffer. Call when the user opens the screen. */
+    fun refreshFailureSummary() {
+        failureSignal.refresh()
+    }
+
+    /** Whether the user has opted in to share failure data. */
+    var sharingEnabled: Boolean
+        get() = failureSignal.sharingEnabled
+        set(value) { failureSignal.sharingEnabled = value }
+
+    /** Build a privacy-safe report (no device ID, no personal data) for the user to share. */
+    fun buildFailureReport(): String = failureSignal.buildReport()
 
     val settings: StateFlow<AppSettings> = store.settings.stateIn(
         scope = viewModelScope,
