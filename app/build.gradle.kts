@@ -198,6 +198,10 @@ dependencies {
     testImplementation(libs.mockk)
     testImplementation(libs.turbine)
     testImplementation(libs.kotlinx.coroutines.test)
+    // Robolectric lets background Android code (NotificationManager, Context) run in a
+    // plain JVM unit test — so automation's Notify path is tested without a device.
+    testImplementation(libs.robolectric)
+    testImplementation("androidx.test:core:1.6.1")
 
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
