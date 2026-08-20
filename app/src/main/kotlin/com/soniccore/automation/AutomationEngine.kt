@@ -1,6 +1,12 @@
 package com.soniccore.automation
 
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
+import androidx.core.app.NotificationCompat
+import com.soniccore.MainActivity
+import com.soniccore.SonicCoreApplication
 import com.soniccore.core.audio.device.AudioDeviceRegistry
 import com.soniccore.core.audio.routing.AudioRouter
 import com.soniccore.core.audio.volume.VolumeController
@@ -216,7 +222,7 @@ class AutomationEngine @Inject constructor(
 
                 is RuleAction.SetAnc -> Unit // Vendor-specific; no public Android API.
 
-                is RuleAction.Notify -> Unit // Surfaced through the service notification.
+                is RuleAction.Notify -> postAlert(action.title, action.message)
 
                 is RuleAction.Delay -> delay(action.millis.coerceIn(0L, 30_000L))
 
@@ -224,6 +230,38 @@ class AutomationEngine @Inject constructor(
             }
         }
         repository.recordFire(rule.id)
+    }
+
+    /**
+     * Surfaces an automation result to the user as a real notification.
+     *
+     * This is deliberately the ONLY UI path for background automation output. An app that
+     * tries to `startActivity` directly from a receiver or a coroutine fired by a background
+     * rule is silently blocked on aggressive OEMs (HyperOS/MIUI, some Samsung/OnePlus builds)
+     * whose SmartPower layers abort "background activity starts". A notification's content
+     * intent, by contrast, is user-mediated: the user taps it, which is always a trusted start
+     * on every ROM. So automation results reach the user everywhere, with the added benefit
+     * that they remain visible in the shade and are dismissible.
+     */
+    private fun postAlert(title: String, message: String) {
+        val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager ?: return
+        val contentIntent = PendingIntent.getActivity(
+            context,
+            title.hashCode(),
+            Intent(context, MainActivity::class.java)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP),
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
+        )
+        val notification = NotificationCompat.Builder(context, SonicCoreApplication.CHANNEL_ALERTS)
+            .setSmallIcon(com.soniccore.R.drawable.ic_notification)
+            .setContentTitle(title)
+            .setContentText(message)
+            .setContentIntent(contentIntent)
+            .setAutoCancel(true)
+            .setCategory(NotificationCompat.CATEGORY_RECOMMENDATION)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .build()
+        manager.notify(title.hashCode(), notification)
     }
 
     private suspend fun fadeVolume(action: RuleAction.FadeVolume) {
