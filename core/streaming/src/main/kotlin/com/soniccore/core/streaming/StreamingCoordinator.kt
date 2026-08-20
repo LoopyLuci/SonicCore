@@ -55,7 +55,8 @@ class StreamingCoordinator @Inject constructor(
         val target = toTarget(device)
             ?: return StreamingResult.Unavailable(
                 "“${device.label}” uses a protocol SonicCore cannot stream to yet " +
-                    "(${device.wifiProtocol?.displayName ?: "unknown"}).",
+                    "(${device.wifiProtocol?.displayName ?: "unknown"}). " +
+                    "Service: ${device.wifiProtocol?.serviceType ?: "none"}.",
             )
 
         val streamer = streamerFor(target.protocol)

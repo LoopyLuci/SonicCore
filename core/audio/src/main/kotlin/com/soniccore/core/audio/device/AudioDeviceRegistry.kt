@@ -11,9 +11,11 @@ import android.media.AudioManager
 import android.os.Handler
 import android.os.Looper
 import androidx.core.content.ContextCompat
+import com.soniccore.core.common.diagnostics.DiagnosticLog
 import com.soniccore.core.model.device.AudioDevice
 import com.soniccore.core.model.device.ConnectionState
 import com.soniccore.core.model.device.DeviceTransport
+import com.soniccore.core.model.device.WifiProtocol
 import com.soniccore.core.model.device.UsbAudioClass
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.awaitClose
@@ -44,6 +46,7 @@ class AudioDeviceRegistry @Inject constructor(
     private val bluetoothInfo: BluetoothInfoProvider,
     private val usbAudio: UsbAudioProvider,
     private val wifiDiscovery: WifiSpeakerDiscovery,
+    private val diagnostics: DiagnosticLog,
 ) {
 
     /** Raw platform endpoints, re-enumerated whenever anything changes. */
@@ -161,6 +164,15 @@ class AudioDeviceRegistry @Inject constructor(
                         vendorId = detail.vendorId,
                         productId = detail.productId,
                     )
+                }
+
+                DeviceTransport.WIFI -> {
+                    // Diagnostic: log when we see an unknown WiFi protocol so we
+                    // know which services users are encountering in the wild.
+                    if (device.wifiProtocol == null) {
+                        diagnostics.w("AudioDeviceRegistry", "network speaker with unknown protocol: ${device.label} address=${device.address} service=${device.wifiProtocol?.serviceType}")
+                    }
+                    device
                 }
 
                 else -> device
