@@ -213,6 +213,7 @@ class AutomationViewModel @Inject constructor(
         is RuleAction.SetEqEnabled -> if (action.enabled) "turn EQ on" else "turn EQ off"
         is RuleAction.SetAnc -> "set ANC to ${(action.level * 100).toInt()}%"
         is RuleAction.Notify -> "notify “${action.title}”"
+        RuleAction.OpenApp -> "open SonicCore"
         is RuleAction.Delay -> "wait ${action.millis} ms"
         is RuleAction.FadeVolume ->
             "fade ${action.stream.displayName} to ${(action.toPercent * 100).toInt()}%"

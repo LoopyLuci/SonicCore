@@ -38,12 +38,21 @@
     <uses-permission android:name="android.permission.VIBRATE" />
 
     <!--
-      Declared for completeness on devices that grant it to non-system apps.
-      SonicCore degrades gracefully and never depends on it.
-    -->
-    <uses-permission
-        android:name="android.permission.BLUETOOTH_PRIVILEGED"
-        tools:ignore="ProtectedPermissions" />
+          Declared for completeness on devices that grant it to non-system apps.
+          SonicCore degrades gracefully and never depends on it.
+        -->
+        <uses-permission
+            android:name="android.permission.BLUETOOTH_PRIVILEGED"
+            tools:ignore="ProtectedPermissions" />
+
+        <!--
+          "Display over other apps". OPTIONAL, default denied, requested only when the user adds
+          an automation "Open app" action. Once granted this is the permanent, cross-OEM exemption
+          from Android's background activity-start restriction, so automation can reliably bring
+          the app to the foreground on aggressive ROMs (HyperOS/MIUI, some Samsung/OnePlus).
+          Without it the OpenApp action is a safe no-op.
+        -->
+        <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
     <uses-feature
         android:name="android.hardware.bluetooth"

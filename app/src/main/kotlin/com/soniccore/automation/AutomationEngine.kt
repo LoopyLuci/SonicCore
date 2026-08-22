@@ -4,6 +4,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.provider.Settings
 import androidx.core.app.NotificationCompat
 import com.soniccore.MainActivity
 import com.soniccore.SonicCoreApplication
@@ -224,12 +225,35 @@ class AutomationEngine @Inject constructor(
 
                 is RuleAction.Notify -> postAlert(action.title, action.message)
 
+                is RuleAction.OpenApp -> openAppIfAllowed()
+
                 is RuleAction.Delay -> delay(action.millis.coerceIn(0L, 30_000L))
 
                 is RuleAction.FadeVolume -> fadeVolume(action)
             }
         }
         repository.recordFire(rule.id)
+    }
+
+    /**
+     * Brings the app to the foreground, but only when the user has granted the SYSTEM_ALERT_WINDOW
+     * permission ("Display over other apps").
+     *
+     * That permission is the permanent, cross-OEM exemption from Android's background
+     * activity-start restriction (`ActivityStarter.restrictBackgroundActivity`). Without it, a
+     * raw `startActivity` from a background rule is silently aborted on HyperOS/MIUI and other
+     * aggressive ROMs. Granting overlay makes the launch allowed everywhere — otherwise the
+     * action degrades to a no-op rather than throwing, so a rule with an ungranted "Open app"
+     * step still runs its other actions.
+     */
+    private fun openAppIfAllowed() {
+        if (!Settings.canDrawOverlays(context)) return
+        runCatching {
+            context.startActivity(
+                Intent(context, MainActivity::class.java)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP),
+            )
+        }
     }
 
     /**

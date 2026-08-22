@@ -147,6 +147,7 @@ class SerializationRoundTripTest {
             RuleAction.SetEqEnabled(true),
             RuleAction.SetAnc(0.8f),
             RuleAction.Notify("t", "m"),
+            RuleAction.OpenApp,
             RuleAction.Delay(500),
             RuleAction.FadeVolume(AudioStream.MUSIC, 0.2f, 2000),
         )

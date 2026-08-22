@@ -108,6 +108,19 @@ sealed interface RuleAction {
     @Serializable
     data class Notify(val title: String, val message: String) : RuleAction
 
+    /**
+     * Brings the app to the foreground.
+     *
+     * This is the one action that starts an activity from a background context, so it MUST
+     * be gated by the [android.provider.Settings.canDrawOverlays] permission. That permission
+     * (SYSTEM_ALERT_WINDOW) is the permanent, cross-OEM exemption from Android's background
+     * activity-start restriction — without it, aggressive ROMs (HyperOS/MIUI, some Samsung and
+     * OnePlus builds) silently abort the launch and this action is a no-op. The action is
+     * intentionally a single, always-open target to keep the permission's blast radius minimal.
+     */
+    @Serializable
+    data object OpenApp : RuleAction
+
     @Serializable
     data class Delay(val millis: Long) : RuleAction
 
