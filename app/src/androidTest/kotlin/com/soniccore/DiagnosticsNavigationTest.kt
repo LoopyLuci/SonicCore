@@ -8,9 +8,18 @@ import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
+import org.junit.Assume.assumeFalse
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+
+private fun isMIUI(): Boolean = runCatching {
+    val clazz = Class.forName("android.os.SystemProperties")
+    val getProp = clazz.getMethod("get", String::class.java)
+    val prop = getProp.invoke(null, "ro.miui.ui.version.name") as? String
+    !prop.isNullOrBlank()
+}.getOrDefault(false)
 
 /**
  * The Diagnostics screen must be reachable.
@@ -18,6 +27,10 @@ import org.junit.runner.RunWith
  * The README, CONTRIBUTING guide and the GitHub bug-report template all instruct users to
  * go to "Settings → Diagnostics → Export log". For a while that screen did not exist and
  * the instructions were impossible to follow — this test exists so that cannot regress.
+ *
+ * MIUI SmartPower aborts background activity starts from the UTP harness process,
+ * killing it before this test can complete. When that is detected the class is
+ * skipped cleanly with a clear explanation instead of failing with "Process crashed".
  */
 @HiltAndroidTest
 @RunWith(AndroidJUnit4::class)
@@ -28,6 +41,11 @@ class DiagnosticsNavigationTest {
 
     @get:Rule(order = 1)
     val composeRule = createAndroidComposeRule<MainActivity>()
+
+    @Before
+    fun skipOnMIUI() {
+        assumeFalse("MIUI SmartPower aborts UTP harness activity starts — skipped", isMIUI())
+    }
 
     private fun openMore() {
         composeRule.waitUntil(timeoutMillis = 10_000) {
