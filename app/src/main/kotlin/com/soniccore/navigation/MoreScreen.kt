@@ -45,6 +45,7 @@ fun MoreScreen(
     onNavigate: (SonicDestination) -> Unit,
     onRequestNotificationAccess: () -> Unit,
     onRequestDndAccess: () -> Unit,
+    onOpenOverlayAccess: () -> Unit = {},
     onShareText: (String) -> Unit,
     onOpenDiagnostics: () -> Unit,
     onOpenFailureReport: () -> Unit,
@@ -111,10 +112,11 @@ fun MoreScreen(
         }
 
         SettingsScreen(
-            onShareBackup = onShareText,
-            onOpenNotificationAccess = onRequestNotificationAccess,
-            onOpenDndAccess = onRequestDndAccess,
-        )
+                    onShareBackup = onShareText,
+                    onOpenNotificationAccess = onRequestNotificationAccess,
+                    onOpenDndAccess = onRequestDndAccess,
+                    onOpenOverlayAccess = onOpenOverlayAccess,
+                )
     }
 }
 

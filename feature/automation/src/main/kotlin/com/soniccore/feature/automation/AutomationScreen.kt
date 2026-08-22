@@ -1,5 +1,6 @@
 package com.soniccore.feature.automation
 
+import android.provider.Settings
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -23,6 +24,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -38,6 +40,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -45,6 +48,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.soniccore.core.model.automation.AutomationRule
+import com.soniccore.core.model.automation.RuleAction
 import com.soniccore.core.model.automation.RuleTrigger
 import com.soniccore.core.ui.R
 import com.soniccore.core.ui.component.LoadingRow
@@ -55,12 +59,17 @@ import com.soniccore.core.ui.component.SectionHeader
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AutomationScreen(viewModel: AutomationViewModel = hiltViewModel()) {
+fun AutomationScreen(
+    viewModel: AutomationViewModel = hiltViewModel(),
+    onOpenOverlayAccess: () -> Unit = {},
+) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
     var showCreate by remember { mutableStateOf(false) }
     var newName by remember { mutableStateOf("") }
     var pendingDelete by remember { mutableStateOf<AutomationRule?>(null) }
+    val appContext = LocalContext.current.applicationContext
+    val overlayGranted = Settings.canDrawOverlays(appContext)
 
     LaunchedEffect(state.message) {
         state.message?.let {
@@ -84,12 +93,36 @@ fun AutomationScreen(viewModel: AutomationViewModel = hiltViewModel()) {
                 .padding(padding)
                 .padding(horizontal = 14.dp),
         ) {
-            item {
-                SectionHeader(
-                    title = stringResource(R.string.automation_rules),
-                    subtitle = stringResource(R.string.format_rules_enabled, state.rules.count { it.enabled }, state.rules.size),
-                )
-            }
+                    item {
+                        SectionHeader(
+                            title = stringResource(R.string.automation_rules),
+                            subtitle = stringResource(R.string.format_rules_enabled, state.rules.count { it.enabled }, state.rules.size),
+                        )
+                    }
+
+                    // If any rule has an "Open app" action but the user hasn't granted "Display over
+                    // other apps", that action silently does nothing on aggressive ROMs. Surface the
+                    // missing permission right here, where the feature lives.
+                    val overlayNeeded = state.rules.any { rule ->
+                        rule.actions.any { it is RuleAction.OpenApp }
+                    }
+                    if (overlayNeeded && !overlayGranted) {
+                        item {
+                            LimitationNotice(
+                                text = stringResource(R.string.automation_overlay_for_open_app),
+                            )
+                        }
+                        item {
+                            OutlinedButton(
+                                onClick = onOpenOverlayAccess,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(bottom = 8.dp),
+                            ) {
+                                Text(stringResource(R.string.automation_overlay_grant))
+                            }
+                        }
+                    }
 
             if (state.isLoading) {
                 item { LoadingRow() }

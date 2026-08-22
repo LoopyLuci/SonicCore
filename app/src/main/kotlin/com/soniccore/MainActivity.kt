@@ -47,6 +47,7 @@ class MainActivity : ComponentActivity() {
                     startupScreen = settings.startupScreen,
                     onRequestNotificationAccess = ::openNotificationListenerSettings,
                     onRequestDndAccess = ::openDndAccessSettings,
+                    onOpenOverlayAccess = ::openOverlaySettings,
                     onRequestMicPermission = ::requestMicrophonePermission,
                     onShareText = ::shareText,
                 )
@@ -89,6 +90,22 @@ class MainActivity : ComponentActivity() {
     private fun openDndAccessSettings() {
         runCatching {
             startActivity(Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS))
+        }
+    }
+
+    /**
+     * Deep-links to the app's "Display over other apps" screen. This is the permission that
+     * lets the automation "Open app" action run on phones (HyperOS/MIUI, some Samsung/OnePlus)
+     * whose battery managers block background activity starts.
+     */
+    private fun openOverlaySettings() {
+        runCatching {
+            startActivity(
+                Intent(
+                    Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                    android.net.Uri.parse("package:$packageName"),
+                ),
+            )
         }
     }
 

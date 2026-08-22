@@ -72,6 +72,7 @@ fun SonicCoreApp(
     startupScreen: StartupScreen = StartupScreen.DASHBOARD,
     onRequestNotificationAccess: () -> Unit = {},
     onRequestDndAccess: () -> Unit = {},
+    onOpenOverlayAccess: () -> Unit = {},
     onRequestMicPermission: () -> Unit = {},
     onShareText: (String) -> Unit = {},
 ) {
@@ -123,12 +124,15 @@ fun SonicCoreApp(
             composable(SonicDestination.MICROPHONE.route) {
                 MicrophoneScreen(onRequestPermission = onRequestMicPermission)
             }
-            composable(SonicDestination.AUTOMATION.route) { AutomationScreen() }
+            composable(SonicDestination.AUTOMATION.route) {
+                AutomationScreen(onOpenOverlayAccess = onOpenOverlayAccess)
+            }
             composable(SonicDestination.SETTINGS.route) {
                 MoreScreen(
                     onNavigate = { navController.navigate(it.route) },
                     onRequestNotificationAccess = onRequestNotificationAccess,
                     onRequestDndAccess = onRequestDndAccess,
+                    onOpenOverlayAccess = onOpenOverlayAccess,
                     onShareText = onShareText,
                     onOpenDiagnostics = { navController.navigate(ROUTE_DIAGNOSTICS) },
                     onOpenFailureReport = { navController.navigate(ROUTE_FAILURE_REPORT) },

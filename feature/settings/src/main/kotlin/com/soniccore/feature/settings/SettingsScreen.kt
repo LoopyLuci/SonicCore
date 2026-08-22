@@ -1,5 +1,6 @@
 package com.soniccore.feature.settings
 
+import android.provider.Settings
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -31,6 +32,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -54,6 +56,7 @@ fun SettingsScreen(
     onShareBackup: (String) -> Unit = {},
     onOpenNotificationAccess: () -> Unit = {},
     onOpenDndAccess: () -> Unit = {},
+    onOpenOverlayAccess: () -> Unit = {},
 ) {
     val settings by viewModel.settings.collectAsStateWithLifecycle()
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -221,21 +224,46 @@ fun SettingsScreen(
 
             item { SectionHeader(title = stringResource(R.string.settings_permissions)) }
             item {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 6.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    OutlinedButton(onClick = onOpenNotificationAccess) { Text(stringResource(R.string.settings_notification_access)) }
-                    OutlinedButton(onClick = onOpenDndAccess) { Text(stringResource(R.string.settings_do_not_disturb)) }
-                }
-            }
-            item {
-                LimitationNotice(
-                    text = stringResource(R.string.settings_notification_access_powers_the_per_app_m),
-                )
-            }
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 6.dp),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            ) {
+                                OutlinedButton(onClick = onOpenNotificationAccess) { Text(stringResource(R.string.settings_notification_access)) }
+                                OutlinedButton(onClick = onOpenDndAccess) { Text(stringResource(R.string.settings_do_not_disturb)) }
+                            }
+                        }
+                        item {
+                            LimitationNotice(
+                                text = stringResource(R.string.settings_notification_access_powers_the_per_app_m),
+                            )
+                        }
+                        item {
+                            val overlayGranted = Settings.canDrawOverlays(LocalContext.current.applicationContext)
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 6.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            ) {
+                                OutlinedButton(onClick = onOpenOverlayAccess) {
+                                    Text(stringResource(R.string.settings_overlay_access_open))
+                                }
+                                InfoChip(
+                                    text = stringResource(
+                                        if (overlayGranted) R.string.settings_overlay_access_granted
+                                        else R.string.settings_overlay_access_not_granted,
+                                    ),
+                                )
+                            }
+                        }
+                        item {
+                            LimitationNotice(
+                                text = stringResource(R.string.settings_overlay_access_description),
+                            )
+                        }
 
             item { SectionHeader(title = stringResource(R.string.settings_backup), subtitle = stringResource(R.string.settings_everything_you_ve_created_as_portable_js)) }
             item {

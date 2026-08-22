@@ -7,11 +7,13 @@
 
     <!-- automation -->
     <string name="automation_automation">Automation</string>
-    <string name="automation_cancel">Cancel</string>
-    <string name="automation_create">Create</string>
-    <string name="automation_delete">Delete</string>
-    <string name="automation_new_rule">New rule</string>
-    <string name="automation_no_rules_yet_create_one_to_switch_profil">No rules yet. Create one to switch profiles automatically when a device </string>
+        <string name="automation_cancel">Cancel</string>
+        <string name="automation_create">Create</string>
+        <string name="automation_delete">Delete</string>
+        <string name="automation_new_rule">New rule</string>
+        <string name="automation_no_rules_yet_create_one_to_switch_profil">No rules yet. Create one to switch profiles automatically when a device </string>
+        <string name="automation_overlay_for_open_app">One of your rules uses “Open app”. That needs the “Display over other apps” permission to work reliably on phones whose battery managers block background activity starts. Without it, the action is skipped.</string>
+        <string name="automation_overlay_grant">Grant display-over-other-apps</string>
     <string name="automation_rule_name">Rule name</string>
     <string name="automation_rules">Rules</string>
     <string name="automation_rules_run_inside_soniccore_s_foreground">Rules run inside SonicCore\'s foreground service. Android may delay background triggers while the device is dozing; time-based rules use exact alarms where the system permits them.</string>
@@ -138,8 +140,12 @@
     <string name="settings_hearing_safety">Hearing safety</string>
     <string name="settings_may_not_work_on_every_device">May not work on every device</string>
     <string name="settings_notification_access">Notification access</string>
-    <string name="settings_notification_access_powers_the_per_app_m">Notification access powers the per-app mixer. Do Not Disturb access is needed to change ring and notification volume while DND is on.</string>
-    <string name="settings_permissions">Permissions</string>
+        <string name="settings_notification_access_powers_the_per_app_m">Notification access powers the per-app mixer. Do Not Disturb access is needed to change ring and notification volume while DND is on.</string>
+        <string name="settings_overlay_access_description">Lets SonicCore open from a background automation rule, even on phones whose battery managers block “background activity starts”. Only needed for the “Open app” automation action.</string>
+        <string name="settings_overlay_access_granted">Enabled</string>
+        <string name="settings_overlay_access_open">Display over other apps</string>
+        <string name="settings_overlay_access_not_granted">Not enabled</string>
+        <string name="settings_permissions">Permissions</string>
     <string name="settings_privacy">Privacy</string>
     <string name="settings_service_notification">Service &amp; notification</string>
     <string name="settings_settings">Settings</string>
