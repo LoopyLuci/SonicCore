@@ -85,9 +85,10 @@ class AudioRouter @Inject constructor(
             )
         }
 
+        val target = registry.findSystemDevice(device.stableKey)
+            ?: return RoutingResult.Failed("Device is no longer connected")
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            val target = registry.findSystemDevice(device.stableKey)
-                ?: return RoutingResult.Failed("Device is no longer connected")
             return runCatching {
                 if (audioManager.setCommunicationDevice(target)) {
                     RoutingResult.Success
@@ -99,27 +100,19 @@ class AudioRouter @Inject constructor(
             }
         }
 
-        // Legacy path: SCO for Bluetooth, speakerphone for built-in.
+        // Pre-31: SCO is the wrong primitive for A2DP speakers like JBL — it opens
+        // a voice-call channel and on MIUI actively kills A2DP media routing. The
+        // platform already knows how to route media to A2DP; we just stop fighting
+        // it. The A2DP proxy in BluetoothInfoProvider enriches the device list.
         return runCatching {
             @Suppress("DEPRECATION")
+            audioManager.stopBluetoothSco()
+            audioManager.isBluetoothScoOn = false
             when (device.transport) {
-                DeviceTransport.BLUETOOTH_CLASSIC, DeviceTransport.BLUETOOTH_LE -> {
-                    audioManager.startBluetoothSco()
-                    audioManager.isBluetoothScoOn = true
-                    RoutingResult.Success
-                }
-                DeviceTransport.BUILTIN -> {
-                    audioManager.stopBluetoothSco()
-                    audioManager.isBluetoothScoOn = false
-                    audioManager.isSpeakerphoneOn = true
-                    RoutingResult.Success
-                }
-                else -> {
-                    audioManager.stopBluetoothSco()
-                    audioManager.isSpeakerphoneOn = false
-                    RoutingResult.Success
-                }
+                DeviceTransport.BUILTIN -> audioManager.isSpeakerphoneOn = true
+                else -> audioManager.isSpeakerphoneOn = false
             }
+            RoutingResult.Success
         }.getOrElse { RoutingResult.Failed(it.message ?: "Legacy routing failed") }
     }
 
