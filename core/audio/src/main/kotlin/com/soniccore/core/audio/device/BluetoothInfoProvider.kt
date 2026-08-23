@@ -16,6 +16,7 @@ import android.os.Build
 import androidx.core.content.ContextCompat
 import com.soniccore.core.model.device.BluetoothCodec
 import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.conflate
@@ -79,7 +80,6 @@ class BluetoothInfoProvider @Inject constructor(
                             onReady()
                         }
                     }
-
                     override fun onServiceDisconnected(profile: Int) {
                         if (profile == BluetoothProfile.A2DP) a2dpProxy = null
                     }
@@ -96,6 +96,21 @@ class BluetoothInfoProvider @Inject constructor(
         a2dpProxy = null
     }
 
+    /**
+     * Enumerate A2DP devices from the BluetoothManager directly — works on all OEMs.
+     * This uses BluetoothManager.getConnectedDevices(BluetoothProfile.A2DP) which is
+     * the documented API for discovering connected A2DP sinks.
+     */
+    @SuppressLint("MissingPermission")
+    fun getA2dpDevicesDirect(): List<BluetoothDeviceDetail> {
+        if (!hasBluetoothPermission) return emptyList()
+        return runCatching {
+            val btm = bluetoothManager ?: return emptyList()
+            val devices = btm.getConnectedDevices(BluetoothProfile.A2DP)
+            devices.map { detailFor(it) }
+        }.getOrDefault(emptyList())
+    }
+
     @SuppressLint("MissingPermission")
     fun connectedDevices(): List<BluetoothDeviceDetail> {
         if (!hasBluetoothPermission) return emptyList()
@@ -103,6 +118,72 @@ class BluetoothInfoProvider @Inject constructor(
             val devices = a2dpProxy?.connectedDevices ?: emptyList()
             devices.map { detailFor(it) }
         }.getOrDefault(emptyList())
+    }
+
+    /**
+     * Flow that emits connected A2DP devices — waits for proxy before first emission.
+     */
+    fun connectedA2dpDevicesFlow(): Flow<List<BluetoothDeviceDetail>> = callbackFlow {
+        connectProxy {}
+
+        var proxyReady = false
+        while (!proxyReady && hasBluetoothPermission) {
+            delay(500L)
+            if (a2dpProxy != null) {
+                proxyReady = true
+                break
+            }
+        }
+
+        val receiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                when (intent?.action) {
+                    BluetoothAdapter.ACTION_STATE_CHANGED -> {
+                        val state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.ERROR)
+                        when (state) {
+                            BluetoothAdapter.STATE_ON -> {
+                                connectProxy {}
+                                trySend(currentSnapshot())
+                            }
+                            BluetoothAdapter.STATE_OFF -> {
+                                a2dpProxy = null
+                                trySend(emptyList())
+                            }
+                            else -> {}
+                        }
+                    }
+                    BluetoothA2dp.ACTION_CONNECTION_STATE_CHANGED,
+                    BluetoothDevice.ACTION_ACL_CONNECTED,
+                    BluetoothDevice.ACTION_ACL_DISCONNECTED,
+                    ACTION_BATTERY_LEVEL_CHANGED,
+                    ACTION_CODEC_CONFIG_CHANGED -> {
+                        trySend(currentSnapshot())
+                    }
+                    else -> {}
+                }
+            }
+        }
+        val filter = IntentFilter().apply {
+            addAction(BluetoothAdapter.ACTION_STATE_CHANGED)
+            addAction(BluetoothA2dp.ACTION_CONNECTION_STATE_CHANGED)
+            addAction(BluetoothDevice.ACTION_ACL_CONNECTED)
+            addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED)
+            addAction(ACTION_BATTERY_LEVEL_CHANGED)
+            addAction(ACTION_CODEC_CONFIG_CHANGED)
+        }
+        ContextCompat.registerReceiver(
+            context,
+            receiver,
+            filter,
+            ContextCompat.RECEIVER_EXPORTED,
+        )
+
+        trySend(currentSnapshot())
+
+        awaitClose {
+            runCatching { context.unregisterReceiver(receiver) }
+            runCatching { releaseProxy() }
+        }
     }
 
     @SuppressLint("MissingPermission")
@@ -119,11 +200,16 @@ class BluetoothInfoProvider @Inject constructor(
         )
     }
 
-    /**
-     * `BluetoothDevice.getBatteryLevel()` is hidden API. Reflection is the only way
-     * to read it without system privileges; null is a legitimate answer and the UI
-     * must render "—" rather than a fake number.
-     */
+    @SuppressLint("MissingPermission")
+    private fun currentSnapshot(): List<BluetoothDeviceDetail> {
+        if (!hasBluetoothPermission) return emptyList()
+        return runCatching {
+            val devices = a2dpProxy?.connectedDevices ?: emptyList()
+            devices.map { detailFor(it) }
+        }.getOrDefault(emptyList())
+    }
+
+    /** `BluetoothDevice.getBatteryLevel()` is hidden API. Reflection is the only way. */
     private fun readBatteryLevel(device: BluetoothDevice): Int? = runCatching {
         val method = BluetoothDevice::class.java.getMethod("getBatteryLevel")
         val level = method.invoke(device) as? Int ?: return null
@@ -162,10 +248,7 @@ class BluetoothInfoProvider @Inject constructor(
         }
     }.getOrDefault(emptyList())
 
-    /**
-     * Requesting a codec requires `BLUETOOTH_PRIVILEGED` on most builds. Returns
-     * false when the platform refuses, so the UI can explain instead of lying.
-     */
+    /** Requesting a codec requires `BLUETOOTH_PRIVILEGED` on most builds. */
     fun requestCodec(device: BluetoothDevice, codec: BluetoothCodec): Boolean = runCatching {
         val proxy = a2dpProxy ?: return false
         val configClass = Class.forName("android.bluetooth.BluetoothCodecConfig")
@@ -183,59 +266,10 @@ class BluetoothInfoProvider @Inject constructor(
         true
     }.getOrDefault(false)
 
-    /** Broadcast-driven stream of BT connect/disconnect/codec/battery changes. */
-    fun observeChanges(): Flow<Unit> = callbackFlow {
-        val receiver = object : BroadcastReceiver() {
-            override fun onReceive(context: Context?, intent: Intent?) {
-                trySend(Unit)
-            }
-        }
-        val filter = IntentFilter().apply {
-            addAction(BluetoothDevice.ACTION_ACL_CONNECTED)
-            addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED)
-            addAction(BluetoothAdapter.ACTION_STATE_CHANGED)
-            addAction(BluetoothA2dp.ACTION_CONNECTION_STATE_CHANGED)
-            addAction(BluetoothA2dp.ACTION_PLAYING_STATE_CHANGED)
-            addAction(ACTION_BATTERY_LEVEL_CHANGED)
-            addAction(ACTION_CODEC_CONFIG_CHANGED)
-        }
-        ContextCompat.registerReceiver(
-            context,
-            receiver,
-            filter,
-            ContextCompat.RECEIVER_EXPORTED,
-        )
-        trySend(Unit)
-        awaitClose { runCatching { context.unregisterReceiver(receiver) } }
-    }.conflate()
-
-    private fun codecFromPlatformType(type: Int): BluetoothCodec = when (type) {
-        SOURCE_CODEC_TYPE_SBC -> BluetoothCodec.SBC
-        SOURCE_CODEC_TYPE_AAC -> BluetoothCodec.AAC
-        SOURCE_CODEC_TYPE_APTX -> BluetoothCodec.APTX
-        SOURCE_CODEC_TYPE_APTX_HD -> BluetoothCodec.APTX_HD
-        SOURCE_CODEC_TYPE_LDAC -> BluetoothCodec.LDAC
-        SOURCE_CODEC_TYPE_LC3 -> BluetoothCodec.LC3
-        SOURCE_CODEC_TYPE_OPUS -> BluetoothCodec.OPUS
-        else -> BluetoothCodec.UNKNOWN
-    }
-
-    private fun platformTypeFor(codec: BluetoothCodec): Int = when (codec) {
-        BluetoothCodec.SBC -> SOURCE_CODEC_TYPE_SBC
-        BluetoothCodec.AAC -> SOURCE_CODEC_TYPE_AAC
-        BluetoothCodec.APTX -> SOURCE_CODEC_TYPE_APTX
-        BluetoothCodec.APTX_HD -> SOURCE_CODEC_TYPE_APTX_HD
-        BluetoothCodec.LDAC -> SOURCE_CODEC_TYPE_LDAC
-        BluetoothCodec.LC3 -> SOURCE_CODEC_TYPE_LC3
-        BluetoothCodec.OPUS -> SOURCE_CODEC_TYPE_OPUS
-        else -> SOURCE_CODEC_TYPE_SBC
-    }
-
-    companion object {
+    companion object codecConstants {
         const val ACTION_BATTERY_LEVEL_CHANGED = "android.bluetooth.device.action.BATTERY_LEVEL_CHANGED"
         const val ACTION_CODEC_CONFIG_CHANGED = "android.bluetooth.a2dp.profile.action.CODEC_CONFIG_CHANGED"
 
-        // Mirrors BluetoothCodecConfig.SOURCE_CODEC_TYPE_* (hidden constants).
         private const val SOURCE_CODEC_TYPE_SBC = 0
         private const val SOURCE_CODEC_TYPE_AAC = 1
         private const val SOURCE_CODEC_TYPE_APTX = 2
@@ -243,5 +277,27 @@ class BluetoothInfoProvider @Inject constructor(
         private const val SOURCE_CODEC_TYPE_LDAC = 4
         private const val SOURCE_CODEC_TYPE_LC3 = 5
         private const val SOURCE_CODEC_TYPE_OPUS = 6
+
+        fun codecFromPlatformType(type: Int): BluetoothCodec = when (type) {
+            SOURCE_CODEC_TYPE_SBC -> BluetoothCodec.SBC
+            SOURCE_CODEC_TYPE_AAC -> BluetoothCodec.AAC
+            SOURCE_CODEC_TYPE_APTX -> BluetoothCodec.APTX
+            SOURCE_CODEC_TYPE_APTX_HD -> BluetoothCodec.APTX_HD
+            SOURCE_CODEC_TYPE_LDAC -> BluetoothCodec.LDAC
+            SOURCE_CODEC_TYPE_LC3 -> BluetoothCodec.LC3
+            SOURCE_CODEC_TYPE_OPUS -> BluetoothCodec.OPUS
+            else -> BluetoothCodec.UNKNOWN
+        }
+
+        fun platformTypeFor(codec: BluetoothCodec): Int = when (codec) {
+            BluetoothCodec.SBC -> SOURCE_CODEC_TYPE_SBC
+            BluetoothCodec.AAC -> SOURCE_CODEC_TYPE_AAC
+            BluetoothCodec.APTX -> SOURCE_CODEC_TYPE_APTX
+            BluetoothCodec.APTX_HD -> SOURCE_CODEC_TYPE_APTX_HD
+            BluetoothCodec.LDAC -> SOURCE_CODEC_TYPE_LDAC
+            BluetoothCodec.LC3 -> SOURCE_CODEC_TYPE_LC3
+            BluetoothCodec.OPUS -> SOURCE_CODEC_TYPE_OPUS
+            else -> SOURCE_CODEC_TYPE_SBC
+        }
     }
 }

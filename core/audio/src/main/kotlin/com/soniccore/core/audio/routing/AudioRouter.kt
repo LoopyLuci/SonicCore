@@ -101,13 +101,19 @@ class AudioRouter @Inject constructor(
         }
 
         // Pre-31: SCO is the wrong primitive for A2DP speakers like JBL — it opens
-        // a voice-call channel and on MIUI actively kills A2DP media routing. The
-        // platform already knows how to route media to A2DP; we just stop fighting
-        // it. The A2DP proxy in BluetoothInfoProvider enriches the device list.
-        return runCatching {
+        // a voice-call channel and on MIUI actively kills A2DP media routing.
+        // The platform already routes media to A2DP once SCO is disabled; we just
+        // stop fighting it. Each call is individually guarded so a failing
+        // SCO toggle (e.g. MIUI rejecting type 8) doesn't poison the result.
+        runCatching {
             @Suppress("DEPRECATION")
             audioManager.stopBluetoothSco()
+        }
+        runCatching {
+            @Suppress("DEPRECATION")
             audioManager.isBluetoothScoOn = false
+        }
+        return runCatching {
             when (device.transport) {
                 DeviceTransport.BUILTIN -> audioManager.isSpeakerphoneOn = true
                 else -> audioManager.isSpeakerphoneOn = false
