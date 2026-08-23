@@ -100,26 +100,38 @@ class AudioRouter @Inject constructor(
             }
         }
 
-        // Pre-31: SCO is the wrong primitive for A2DP speakers like JBL — it opens
-        // a voice-call channel and on MIUI actively kills A2DP media routing.
-        // The platform already routes media to A2DP once SCO is disabled; we just
-        // stop fighting it. Each call is individually guarded so a failing
-        // SCO toggle (e.g. MIUI rejecting type 8) doesn't poison the result.
-        runCatching {
-            @Suppress("DEPRECATION")
-            audioManager.stopBluetoothSco()
-        }
-        runCatching {
-            @Suppress("DEPRECATION")
-            audioManager.isBluetoothScoOn = false
-        }
-        return runCatching {
+        if (device.transport == DeviceTransport.BLUETOOTH_CLASSIC ||
+            device.transport == DeviceTransport.BLUETOOTH_LE
+        ) {
+            // On MIUI, calling stopBluetoothSco() when the active device is
+            // TYPE_BLUETOOTH_A2DP (type 8) throws "invalid device type: 8".
+            // The platform already routes media to the connected A2DP sink;
+            // we just need to ensure speakerphone is off so it doesn't
+            // steal the route. Each call is individually guarded.
+            runCatching { audioManager.isSpeakerphoneOn = false }
+            runCatching {
+                @Suppress("DEPRECATION")
+                audioManager.stopBluetoothSco()
+            }
+            runCatching {
+                @Suppress("DEPRECATION")
+                audioManager.isBluetoothScoOn = false
+            }
+        } else {
+            runCatching {
+                @Suppress("DEPRECATION")
+                audioManager.stopBluetoothSco()
+            }
+            runCatching {
+                @Suppress("DEPRECATION")
+                audioManager.isBluetoothScoOn = false
+            }
             when (device.transport) {
                 DeviceTransport.BUILTIN -> audioManager.isSpeakerphoneOn = true
                 else -> audioManager.isSpeakerphoneOn = false
             }
-            RoutingResult.Success
-        }.getOrElse { RoutingResult.Failed(it.message ?: "Legacy routing failed") }
+        }
+        return RoutingResult.Success
     }
 
     fun clearCommunicationRoute() {
