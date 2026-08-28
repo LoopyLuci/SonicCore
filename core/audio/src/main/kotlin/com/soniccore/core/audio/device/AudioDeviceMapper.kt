@@ -72,33 +72,8 @@ object AudioDeviceMapper {
             null
         }
 
-    private fun displayNameFor(info: AudioDeviceInfo, productName: String?): String {
-        val fallback = when (info.type) {
-            AudioDeviceInfo.TYPE_BUILTIN_SPEAKER -> "Phone speaker"
-            AudioDeviceInfo.TYPE_BUILTIN_EARPIECE -> "Earpiece"
-            AudioDeviceInfo.TYPE_BUILTIN_MIC -> "Built-in microphone"
-            AudioDeviceInfo.TYPE_WIRED_HEADSET -> "Wired headset"
-            AudioDeviceInfo.TYPE_WIRED_HEADPHONES -> "Wired headphones"
-            AudioDeviceInfo.TYPE_USB_DEVICE -> "USB audio device"
-            AudioDeviceInfo.TYPE_USB_HEADSET -> "USB headset"
-            AudioDeviceInfo.TYPE_USB_ACCESSORY -> "USB accessory"
-            AudioDeviceInfo.TYPE_BLUETOOTH_A2DP -> "Bluetooth audio"
-            AudioDeviceInfo.TYPE_BLUETOOTH_SCO -> "Bluetooth headset"
-            AudioDeviceInfo.TYPE_HDMI -> "HDMI"
-            AudioDeviceInfo.TYPE_TELEPHONY -> "Telephony"
-            AudioDeviceInfo.TYPE_DOCK -> "Dock"
-            AudioDeviceInfo.TYPE_FM -> "FM radio"
-            AudioDeviceInfo.TYPE_LINE_ANALOG -> "Analog line"
-            AudioDeviceInfo.TYPE_LINE_DIGITAL -> "Digital line"
-            AudioDeviceInfo.TYPE_AUX_LINE -> "Aux line"
-            else -> "Audio device"
-        }
-        // productName is often just the phone model for built-ins; prefer our label then.
-        val isBuiltIn = info.type == AudioDeviceInfo.TYPE_BUILTIN_SPEAKER ||
-            info.type == AudioDeviceInfo.TYPE_BUILTIN_MIC ||
-            info.type == AudioDeviceInfo.TYPE_BUILTIN_EARPIECE
-        return if (isBuiltIn || productName == null) fallback else productName
-    }
+    private fun displayNameFor(info: AudioDeviceInfo, productName: String?): String =
+        DeviceNamingPolicy.displayNameFor(info, productName, null)
 
     fun transportFor(type: Int): DeviceTransport = when (type) {
         AudioDeviceInfo.TYPE_WIRED_HEADSET,

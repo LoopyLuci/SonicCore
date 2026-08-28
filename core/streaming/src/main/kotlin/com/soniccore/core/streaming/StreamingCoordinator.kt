@@ -3,6 +3,9 @@ package com.soniccore.core.streaming
 import com.soniccore.core.model.device.AudioDevice
 import com.soniccore.core.model.device.WifiProtocol
 import com.soniccore.core.streaming.airplay.AirPlayAudioStreamer
+import com.soniccore.core.streaming.dlna.DlnaAudioStreamer
+import com.soniccore.core.streaming.generic.GenericNetworkStreamer
+import com.soniccore.core.streaming.spotify.SpotifyConnectStreamer
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,6 +23,9 @@ class StreamingCoordinator @Inject constructor(
     // the F-Droid build carries no Play Services dependency.
     private val castStreamer: CastStreamer,
     private val airPlayStreamer: AirPlayAudioStreamer,
+    private val dlnaStreamer: DlnaAudioStreamer,
+    private val spotifyConnectStreamer: SpotifyConnectStreamer,
+    private val genericStreamer: GenericNetworkStreamer,
 ) {
     private val _activeState = MutableStateFlow<StreamingState>(StreamingState.Idle)
     val activeState: StateFlow<StreamingState> = _activeState.asStateFlow()
@@ -29,15 +35,21 @@ class StreamingCoordinator @Inject constructor(
     fun streamerFor(protocol: StreamingProtocol): AudioStreamer = when (protocol) {
         StreamingProtocol.CHROMECAST -> castStreamer
         StreamingProtocol.AIRPLAY -> airPlayStreamer
+        StreamingProtocol.DLNA -> dlnaStreamer
+        StreamingProtocol.SPOTIFY_CONNECT -> spotifyConnectStreamer
+        StreamingProtocol.GENERIC -> genericStreamer
+        else -> genericStreamer
     }
 
     /** Null when the device is not a streamable network target. */
     fun protocolFor(device: AudioDevice): StreamingProtocol? = when (device.wifiProtocol) {
         WifiProtocol.CHROMECAST -> StreamingProtocol.CHROMECAST
         WifiProtocol.AIRPLAY -> StreamingProtocol.AIRPLAY
-        // Sonos speaks AirPlay 2 on modern models; DLNA/Spotify need their own stacks.
         WifiProtocol.SONOS -> StreamingProtocol.AIRPLAY
-        WifiProtocol.DLNA, WifiProtocol.SPOTIFY_CONNECT, WifiProtocol.GENERIC, null -> null
+        WifiProtocol.DLNA -> StreamingProtocol.DLNA
+        WifiProtocol.SPOTIFY_CONNECT -> StreamingProtocol.SPOTIFY_CONNECT
+        WifiProtocol.GENERIC -> StreamingProtocol.GENERIC
+        null -> StreamingProtocol.GENERIC
     }
 
     fun toTarget(device: AudioDevice): DiscoveredStreamingTarget? {
@@ -67,6 +79,12 @@ class StreamingCoordinator @Inject constructor(
                         "Chromecast needs Google Play Services, which this device does not have."
                     StreamingProtocol.AIRPLAY ->
                         "AirPlay is unavailable on this device."
+                    StreamingProtocol.DLNA ->
+                        "DLNA playback needs a compatible player on this device."
+                    StreamingProtocol.SPOTIFY_CONNECT ->
+                        "Spotify Connect needs the Spotify app installed."
+                    StreamingProtocol.GENERIC ->
+                        "This network speaker does not expose a supported streaming control path."
                 },
             )
         }

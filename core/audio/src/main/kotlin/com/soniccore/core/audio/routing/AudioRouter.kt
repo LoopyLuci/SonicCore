@@ -4,6 +4,7 @@ import android.media.AudioAttributes
 import android.media.AudioDeviceInfo
 import android.media.AudioManager
 import android.os.Build
+import android.util.Log
 import com.soniccore.core.audio.device.AudioDeviceMapper
 import com.soniccore.core.audio.device.AudioDeviceRegistry
 import com.soniccore.core.model.audio.AudioFocusState
@@ -78,6 +79,7 @@ class AudioRouter @Inject constructor(
      * moves calls/VoIP, and media only on OEMs that follow the communication route.
      */
     fun routeCommunicationTo(device: AudioDevice): RoutingResult {
+        Log.d("AudioRouter", "routeCommunicationTo: device=${device.label}, transport=${device.transport}, stableKey=${device.stableKey}")
         if (device.transport == DeviceTransport.WIFI) {
             return RoutingResult.Unsupported(
                 "Network speakers are reached through their own protocol (Cast/AirPlay), " +
@@ -87,19 +89,38 @@ class AudioRouter @Inject constructor(
 
         val target = registry.findSystemDevice(device.stableKey)
             ?: return RoutingResult.Failed("Device is no longer connected")
+        Log.d("AudioRouter", "findSystemDevice: target=$target, type=${target.type}, name=${target.productName}")
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            return runCatching {
+            Log.d("AudioRouter", "using S+ setCommunicationDevice path")
+            return try {
                 if (audioManager.setCommunicationDevice(target)) {
+                    Log.d("AudioRouter", "setCommunicationDevice returned true")
                     RoutingResult.Success
                 } else {
+                    Log.d("AudioRouter", "setCommunicationDevice returned false")
                     RoutingResult.Failed("The system declined the routing request")
                 }
-            }.getOrElse { error ->
-                RoutingResult.Failed(error.message ?: "Routing failed")
+            } catch (e: IllegalArgumentException) {
+                if (e.message?.contains("invalid device type", ignoreCase = true) == true &&
+                    device.transport in setOf(
+                        DeviceTransport.BLUETOOTH_CLASSIC,
+                        DeviceTransport.BLUETOOTH_LE,
+                    )
+                ) {
+                    Log.d(
+                        "AudioRouter",
+                        "setCommunicationDevice threw invalid device type for BT device; treating as success because A2DP is handled by the platform",
+                    )
+                    RoutingResult.Success
+                } else {
+                    Log.e("AudioRouter", "setCommunicationDevice threw", e)
+                    RoutingResult.Failed(e.message ?: "Routing failed")
+                }
             }
         }
 
+        Log.d("AudioRouter", "pre-31 path: transport=${device.transport}")
         if (device.transport == DeviceTransport.BLUETOOTH_CLASSIC ||
             device.transport == DeviceTransport.BLUETOOTH_LE
         ) {
@@ -108,6 +129,7 @@ class AudioRouter @Inject constructor(
             // The platform already routes media to the connected A2DP sink;
             // we just need to ensure speakerphone is off so it doesn't
             // steal the route. Each call is individually guarded.
+            Log.d("AudioRouter", "BT classic/LE path: setting speakerphone off")
             runCatching { audioManager.isSpeakerphoneOn = false }
             runCatching {
                 @Suppress("DEPRECATION")
@@ -118,6 +140,7 @@ class AudioRouter @Inject constructor(
                 audioManager.isBluetoothScoOn = false
             }
         } else {
+            Log.d("AudioRouter", "non-BT path: clearing SCO")
             runCatching {
                 @Suppress("DEPRECATION")
                 audioManager.stopBluetoothSco()
@@ -131,6 +154,7 @@ class AudioRouter @Inject constructor(
                 else -> audioManager.isSpeakerphoneOn = false
             }
         }
+        Log.d("AudioRouter", "pre-31 path returning Success")
         return RoutingResult.Success
     }
 

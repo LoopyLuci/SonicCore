@@ -8,7 +8,6 @@ import com.soniccore.core.model.device.DeviceTransport
 import com.soniccore.core.model.device.WifiProtocol
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -50,12 +49,12 @@ class StreamingProtocolTest {
 
     @Test
     fun `unsupported protocols return null rather than guessing`() {
-        // DLNA and Spotify Connect need their own stacks; pretending otherwise
-        // would give the user a button that silently fails.
-        assertNull(protocolFor(wifiDevice(WifiProtocol.DLNA)))
-        assertNull(protocolFor(wifiDevice(WifiProtocol.SPOTIFY_CONNECT)))
-        assertNull(protocolFor(wifiDevice(WifiProtocol.GENERIC)))
-        assertNull(protocolFor(wifiDevice(null)))
+        // DLNA, Spotify Connect and generic devices now have explicit streamers,
+        // so they should route to a protocol instead of null.
+        assertEquals(StreamingProtocol.DLNA, protocolFor(wifiDevice(WifiProtocol.DLNA)))
+        assertEquals(StreamingProtocol.SPOTIFY_CONNECT, protocolFor(wifiDevice(WifiProtocol.SPOTIFY_CONNECT)))
+        assertEquals(StreamingProtocol.GENERIC, protocolFor(wifiDevice(WifiProtocol.GENERIC)))
+        assertEquals(StreamingProtocol.GENERIC, protocolFor(wifiDevice(null)))
     }
 
     /** Mirrors StreamingCoordinator.protocolFor without needing Android context. */
@@ -63,7 +62,10 @@ class StreamingProtocolTest {
         WifiProtocol.CHROMECAST -> StreamingProtocol.CHROMECAST
         WifiProtocol.AIRPLAY -> StreamingProtocol.AIRPLAY
         WifiProtocol.SONOS -> StreamingProtocol.AIRPLAY
-        WifiProtocol.DLNA, WifiProtocol.SPOTIFY_CONNECT, WifiProtocol.GENERIC, null -> null
+        WifiProtocol.DLNA -> StreamingProtocol.DLNA
+        WifiProtocol.SPOTIFY_CONNECT -> StreamingProtocol.SPOTIFY_CONNECT
+        WifiProtocol.GENERIC -> StreamingProtocol.GENERIC
+        null -> StreamingProtocol.GENERIC
     }
 
     @Test

@@ -70,6 +70,15 @@ class BluetoothInfoProvider @Inject constructor(
             onReady()
             return
         }
+        connectProxyWithRetry(onReady, attempt = 0)
+    }
+
+    private fun connectProxyWithRetry(onReady: () -> Unit, attempt: Int) {
+        val maxAttempts = 3
+        if (attempt >= maxAttempts) {
+            onReady()
+            return
+        }
         runCatching {
             adapter?.getProfileProxy(
                 context,
@@ -188,7 +197,10 @@ class BluetoothInfoProvider @Inject constructor(
 
     @SuppressLint("MissingPermission")
     fun detailFor(device: BluetoothDevice): BluetoothDeviceDetail {
-        val name = runCatching { device.name }.getOrNull()
+        val name = DeviceNamingPolicy.friendlyNameForBluetooth(
+            runCatching { device.name }.getOrNull(),
+            device.address,
+        )
         return BluetoothDeviceDetail(
             address = device.address,
             name = name,

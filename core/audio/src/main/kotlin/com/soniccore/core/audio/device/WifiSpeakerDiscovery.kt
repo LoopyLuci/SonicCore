@@ -112,7 +112,7 @@ class WifiSpeakerDiscovery @Inject constructor(
     }
 
     private fun toDevice(name: String, ipAddress: String?, protocol: WifiProtocol): AudioDevice {
-        val cleanName = name.replace(Regex("\\._.*$"), "").replace('-', ' ').trim()
+        val cleanName = DeviceNamingPolicy.friendlyNameForWifi(name, ipAddress, protocol)
         return AudioDevice(
             stableKey = AudioDevice.buildStableKey(
                 transport = DeviceTransport.WIFI,
@@ -121,7 +121,7 @@ class WifiSpeakerDiscovery @Inject constructor(
                 direction = DeviceDirection.OUTPUT,
             ),
             systemId = null,
-            displayName = cleanName.ifBlank { protocol.displayName },
+            displayName = cleanName,
             productName = cleanName,
             address = ipAddress,
             transport = DeviceTransport.WIFI,

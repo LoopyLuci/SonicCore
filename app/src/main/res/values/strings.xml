@@ -13,4 +13,18 @@
     <string name="widget_description">Volume, profile and output at a glance</string>
     <string name="action_stop">Stop</string>
     <string name="action_next_profile">Next profile</string>
+
+    <string name="permission_grant_title">Permissions</string>
+    <string name="permission_grant_subtitle">SonicCore needs these to control audio and connect to speakers.</string>
+    <string name="permission_microphone">Microphone</string>
+    <string name="permission_microphone_desc">Used for microphone input routing and audio monitoring.</string>
+    <string name="permission_bluetooth">Bluetooth</string>
+    <string name="permission_bluetooth_desc">Used to discover, connect, and route to Bluetooth audio devices.</string>
+    <string name="permission_notifications">Notifications</string>
+    <string name="permission_notifications_desc">Keeps SonicCore visible while controlling audio in the background.</string>
+    <string name="button_grant_permissions">Grant permissions</string>
+    <string name="button_continue">Continue anyway</string>
+    <string name="permission_skipped">Some permissions were not granted. You can enable them later in Settings.</string>
+    <string name="permission_permanently_denied">A required permission is permanently denied. Open Settings to enable it.</string>
+    <string name="permission_open_settings">Open Settings</string>
 </resources>

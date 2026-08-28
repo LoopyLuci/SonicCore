@@ -59,7 +59,14 @@ class AudioDeviceRegistry @Inject constructor(
     /** Raw platform endpoints, re-enumerated whenever anything changes. */
     private val platformDevices: Flow<List<AudioDevice>> = callbackFlow {
         fun emit() {
-            trySend(enumeratePlatform())
+            try {
+                trySend(enumeratePlatform())
+            } catch (t: Throwable) {
+                // A transient platform or DB error must not kill the flow; emit an
+                // empty list so downstream UI stays alive and can retry on the next
+                // callback.
+                trySend(emptyList())
+            }
         }
 
         val callback = object : AudioDeviceCallback() {
@@ -129,16 +136,17 @@ class AudioDeviceRegistry @Inject constructor(
         // not the proxy-based path which can return empty before the proxy callback fires.
         val proxyList = runCatching {
             bluetoothInfo.getA2dpDevicesDirect().map { detail ->
+                val friendlyName = DeviceNamingPolicy.friendlyNameForBluetooth(detail.name, detail.address)
                 AudioDevice(
                     stableKey = AudioDevice.buildStableKey(
                         DeviceTransport.BLUETOOTH_CLASSIC,
                         detail.address,
-                        detail.name,
+                        friendlyName,
                         DeviceDirection.OUTPUT,
                     ),
                     systemId = null,
-                    displayName = detail.name ?: detail.address ?: "Bluetooth audio",
-                    productName = detail.name,
+                    displayName = friendlyName,
+                    productName = friendlyName,
                     address = detail.address,
                     transport = DeviceTransport.BLUETOOTH_CLASSIC,
                     kind = DeviceKind.HEADPHONES,
@@ -200,16 +208,17 @@ class AudioDeviceRegistry @Inject constructor(
     /** Bluetooth A2DP devices flow — used to surface devices the platform doesn't enumerate. */
     private val proxyA2dpDevices: Flow<List<AudioDevice>> = bluetoothInfo.connectedA2dpDevicesFlow().map { details ->
         details.map { detail ->
+            val friendlyName = DeviceNamingPolicy.friendlyNameForBluetooth(detail.name, detail.address)
             AudioDevice(
                 stableKey = AudioDevice.buildStableKey(
                     DeviceTransport.BLUETOOTH_CLASSIC,
                     detail.address,
-                    detail.name,
+                    friendlyName,
                     DeviceDirection.OUTPUT,
                 ),
                 systemId = null,
-                displayName = detail.name ?: detail.address ?: "Bluetooth audio",
-                productName = detail.name,
+                displayName = friendlyName,
+                productName = friendlyName,
                 address = detail.address,
                 transport = DeviceTransport.BLUETOOTH_CLASSIC,
                 kind = DeviceKind.HEADPHONES,

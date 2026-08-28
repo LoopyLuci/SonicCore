@@ -169,6 +169,17 @@ class SonicAudioService : Service() {
         return START_STICKY
     }
 
+    override fun onTaskRemoved(rootIntent: Intent?) {
+        // If the user swipes the app away, restart the foreground service so device
+        // listening and automation keep working. This is safe: the service is already
+        // foregrounded and the restart is immediate, not a delayed alarm.
+        runCatching {
+            val restart = Intent(this, SonicAudioService::class.java)
+            startForegroundService(restart)
+        }
+        super.onTaskRemoved(rootIntent)
+    }
+
     override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onDestroy() {

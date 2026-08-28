@@ -20,6 +20,9 @@ interface StreamingTarget {
 enum class StreamingProtocol(val displayName: String) {
     CHROMECAST("Chromecast"),
     AIRPLAY("AirPlay"),
+    DLNA("DLNA"),
+    SPOTIFY_CONNECT("Spotify Connect"),
+    GENERIC("Network Speaker"),
 }
 
 /** Where a streaming session currently is. */

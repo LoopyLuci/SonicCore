@@ -21,3 +21,8 @@ keystore.properties
 # OS
 .DS_Store
 Thumbs.db
+
+# Temp/log noise
+*.log
+*.tmp
+*.nul
